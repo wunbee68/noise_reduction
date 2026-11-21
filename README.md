@@ -2,13 +2,13 @@
 
 PyTorch 기반 CNN으로 잡음이 섞인 음성을 복원하는 챌린지 프로젝트입니다. 예제는 16 kHz 모노, 3초 길이의 정렬된 noisy/clean 쌍을 사용합니다. 학습 1,296쌍, 검증 164쌍입니다.
 
-## 개발 기반 및 환경
+## 1. 개발 기반 및 환경
 
 개발·실행 기반은 VS Code Jupyter와 Python 3.12입니다. 이번 학습은 macOS, PyTorch 2.15.0, CPU에서 수행했습니다. 노트북의 환경 셀은 PyTorch, NumPy, pandas, SciPy, SoundFile, Matplotlib, tqdm을 확인하고 누락된 패키지를 설치합니다. PESQ-WB 평가는 `pesq==0.0.4`를 사용합니다.
 
 macOS에서 PESQ 빌드가 Xcode 라이선스 오류로 실패하면 Terminal에서 `sudo xcodebuild -license`를 실행해 동의한 뒤 노트북의 첫 환경 셀을 다시 실행하세요. Windows Conda 커널 설치 방법은 노트북 1절을 참고하세요.
 
-## 데이터 준비
+## 2. 데이터 준비
 
 데이터셋은 이 저장소에 포함하지 않습니다. 개인 음성이 포함될 수 있으므로 원본 WAV를 공개 저장소에 추가하지 마세요. 데이터 루트에는 다음 구조가 필요합니다.
 
@@ -26,7 +26,7 @@ deep_learning_noise_reduction_challenge/
 
 WAV는 16 kHz 모노, 48,000표본(3초)이어야 합니다. 데이터 폴더를 저장소 루트 아래 기본 폴더명으로 두거나, 노트북 1절의 환경 설정 셀에서 `LOCAL_FOLDER`를 데이터 루트 경로로 지정하세요.
 
-## 실행 방법
+## 3. 실행 방법
 
 1. VS Code에서 저장소를 열고 `deep_learning_noise_reduction.ipynb`를 Python 3.12 커널로 엽니다.
 2. 1–3절을 위에서 아래로 실행해 패키지, 데이터 경로, clean/noisy 쌍, 모델 구조를 확인합니다.
@@ -36,13 +36,13 @@ WAV는 16 kHz 모노, 48,000표본(3초)이어야 합니다. 데이터 폴더를
 
 기본 설정은 매 epoch 손실을 검증하고, `PESQ_EVAL_INTERVAL=5`마다 전체 PESQ-WB를 계산합니다. `PREVIEW_EPOCHS`는 항상 평가합니다. 최고 가중치, 학습 기록, 학습 요약과 결과 CSV는 `outputs/`에 저장됩니다.
 
-## 적용 알고리즘
+## 4. 적용 알고리즘
 
 모델은 noisy 파형에 512표본 Hann 창, hop 128로 STFT를 적용합니다. 257개 주파수 빈의 `log1p(|STFT|)`를 1D CNN에 넣어 시간축별 마스크를 예측합니다. CNN은 Conv1d 채널 `(64, 64)`, 커널 `(5, 3, 1)`, ReLU 두 층과 Sigmoid 출력을 사용합니다. 예측 마스크를 noisy 복소 스펙트럼에 곱해 위상은 유지하고 크기를 조정한 뒤 inverse STFT로 파형을 복원합니다.
 
 학습 손실은 복원 스펙트럼과 clean 스펙트럼 간 로그 크기 L1입니다. Adam으로 최적화하며, 전체 검증 PESQ-WB를 가중치 선택 기준, 학습률 조정 기준, 조기 종료 기준으로 사용합니다. Noisy 입력은 동일한 파일별 지표 비교의 기준선입니다.
 
-## 최종 학습 설정
+## 5. 최종 학습 설정
 
 | 설정 | 값 |
 | --- | ---: |
@@ -62,7 +62,7 @@ WAV는 16 kHz 모노, 48,000표본(3초)이어야 합니다. 데이터 폴더를
 
 PESQ를 5 epoch마다 평가하므로 `LR_PATIENCE=5`는 실제 `ReduceLROnPlateau.patience=1` 평가 간격으로 환산됩니다. 조기 종료의 patience는 전체 epoch 기준입니다.
 
-## Validation 결과
+## 6. Validation 결과
 
 최종 실행은 180 epoch에서 조기 종료했고, 평가한 epoch 중 최고 가중치는 **epoch 170**입니다. 아래 값은 저장된 CNN 체크포인트로 검증 164개 전체를 다시 평가한 결과입니다.
 
@@ -72,7 +72,7 @@ PESQ를 5 epoch마다 평가하므로 `LR_PATIENCE=5`는 실제 `ReduceLROnPlate
 | CNN 복원 | 164 | 1.7322 | 13.5338 |
 | 개선량 (CNN − 입력) | 164 | +0.3375 | +3.8996 |
 
-## 저장소 파일
+## 7. 저장소 파일
 
 ```text
 .
@@ -91,7 +91,7 @@ PESQ를 5 epoch마다 평가하므로 `LR_PATIENCE=5`는 실제 `ReduceLROnPlate
 
 노트북은 GitHub에서 바로 열 수 있도록 실행 출력과 오디오 데이터를 제거한 사본입니다. 데이터 WAV, 로컬 STFT 캐시, 미리보기 WAV는 `.gitignore`에서 제외하며, 비교 재현용 epoch 가중치는 저장소에 포함합니다.
 
-## 참고 문헌 및 문서
+## 8. 참고 문헌 및 문서
 
 - PyTorch, [`torch.stft`](https://docs.pytorch.org/docs/stable/generated/torch.stft.html) 및 [`torch.istft`](https://docs.pytorch.org/docs/stable/generated/torch.istft.html) — STFT/역 STFT 구현.
 - PyTorch, [`torch.nn.Conv1d`](https://docs.pytorch.org/docs/stable/generated/torch.nn.Conv1d.html) — CNN 시간축 합성곱 계층.
