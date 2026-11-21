@@ -219,5 +219,16 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# Challenge voice data and local caches may contain identifiable recordings.
+/train/
+/validation/
+/deep_learning_noise_reduction_challenge/train/
+/deep_learning_noise_reduction_challenge/validation/
+/.waveform_cache/
+/deep_learning_noise_reduction_challenge/.waveform_cache/
+/outputs/previews/**/*.wav
+/deep_learning_noise_reduction_challenge/outputs/previews/**/*.wav
+*.wav
+
 # Streamlit
 .streamlit/secrets.toml
