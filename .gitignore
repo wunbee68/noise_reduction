@@ -229,6 +229,10 @@ __marimo__/
 /outputs/previews/**/*.wav
 /deep_learning_noise_reduction_challenge/outputs/previews/**/*.wav
 *.wav
+/input/
+/output/
+/analysis_examples/
+/submission_materials/
 
 # Streamlit
 .streamlit/secrets.toml

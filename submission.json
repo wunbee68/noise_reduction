@@ -1,0 +1,8 @@
+{
+  "mpsenet": "weights/mpsenet_dns.pt",
+  "mpsenet_settings": "weights/mpsenet_settings.json",
+  "fastenhancer": "weights/fastenhancer_dns_l.onnx",
+  "refiner": "weights/fastenhancer_refiner_epoch08.pt",
+  "refinement_strength": 0.5,
+  "fastenhancer_mix": 0.2
+}

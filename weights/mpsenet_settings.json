@@ -1,0 +1,9 @@
+{
+  "dense_channel": 64,
+  "num_tsblocks": 4,
+  "beta": 2.0,
+  "n_fft": 400,
+  "hop_size": 100,
+  "win_size": 400,
+  "compress_factor": 0.3
+}
